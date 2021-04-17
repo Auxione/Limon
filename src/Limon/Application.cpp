@@ -11,7 +11,6 @@ int limon::Application::Run(int argc, char** argv) {
 		return -1;
 	}
 
-	//m_Path.assign("C:\\Seftali-Test\\1.png");
 	m_Path.assign(argv[1]);
 
 	Load(m_Path);
