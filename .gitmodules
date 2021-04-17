@@ -1,0 +1,6 @@
+[submodule "Dependencies/stb"]
+	path = Dependencies/stb
+	url = https://github.com/nothings/stb.git
+[submodule "Dependencies/glfw"]
+	path = Dependencies/glfw
+	url = https://github.com/glfw/glfw.git
