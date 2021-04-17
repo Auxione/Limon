@@ -46,3 +46,7 @@ _deps
 #ignore build folders
 out/build
 [Bb][Uu][Ii][Ll][Dd]/
+
+#ignore vstudio
+.vs/
+.vs
