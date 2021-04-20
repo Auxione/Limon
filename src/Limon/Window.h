@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include <cstdint>
-#include "GLFW/glfw3.h"
-#include "Camera.h"
+#include "GLFW/glfw3.h" 
+
+#include "Application.h"
 
 namespace limon {
 	static uint32_t s_WindowCount = 0;
@@ -10,14 +11,16 @@ namespace limon {
 	class Window {
 	private:
 		GLFWwindow* m_NativePtr = nullptr;
-		Camera* m_Camera = nullptr;
+		Application* m_Application = nullptr;
 	public:
-		Window(const std::string& title, const uint16_t width, const uint16_t height);
+		Window(Application* app, const uint16_t width, const uint16_t height);
 		~Window();
 
 		void Update()const;
 		bool CloseRequest() const;
 
-		void SetCamera(Camera* camera);
+	public:
+		void SetTitle(const std::string& title);
+		void SetIcon(const Image* icon);
 	};
 }

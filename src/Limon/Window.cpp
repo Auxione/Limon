@@ -1,29 +1,55 @@
 #include "Window.h"
 #include <iostream>
 
-limon::Window::Window(const std::string& title, const uint16_t width, const uint16_t height) {
+limon::Window::Window(Application* app, const uint16_t width, const uint16_t height) {
 	if (s_WindowCount == 0) {
 		if (glfwInit() == GLFW_FALSE) {
 			std::cerr << "Failed to initialize GLFW." << std::endl;
 		}
 	}
 
-	m_NativePtr = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+	m_NativePtr = glfwCreateWindow(width, height, "Limon", NULL, NULL);
 	if (m_NativePtr == nullptr) {
 		std::cerr << "Failed to create GLFW window." << std::endl;
 		return;
 	}
 
+	m_Application = app;
+	app->OnWindowResize(width, height);
+	glfwSetWindowUserPointer(m_NativePtr, this);
+
 	glfwSetWindowSizeCallback(m_NativePtr, [](GLFWwindow* window, int width, int height) {
-		Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
-		camera->x = width / 2;
-		camera->y = height / 2;
-		camera->width = width;
-		camera->height = height;
+		Application* app = static_cast<Window*>(glfwGetWindowUserPointer(window))->m_Application;
+		app->OnWindowResize(width, height);
 							  });
 
-	glfwMakeContextCurrent(m_NativePtr);
+	glfwSetDropCallback(m_NativePtr, [](GLFWwindow* window, int  count, const char** path) {
+		Application* app = static_cast<Window*>(glfwGetWindowUserPointer(window))->m_Application;
+		app->OnWindowDrop(count, path);
+						});
 
+	glfwSetCursorPosCallback(m_NativePtr, [](GLFWwindow* window, double x, double y) {
+		Application* app = static_cast<Window*>(glfwGetWindowUserPointer(window))->m_Application;
+		app->OnMouseMove(x, y);
+							 });
+
+	glfwSetScrollCallback(m_NativePtr, [](GLFWwindow* window, double x, double y) {
+		Application* app = static_cast<Window*>(glfwGetWindowUserPointer(window))->m_Application;
+		app->OnScrollChange(x, y);
+						  });
+
+	glfwSetMouseButtonCallback(m_NativePtr, [](GLFWwindow* window, int button, int action, int mods) {
+		Application* app = static_cast<Window*>(glfwGetWindowUserPointer(window))->m_Application;
+		if (action == GLFW_PRESS) {
+			app->OnMousePress(button);
+		}
+
+		if (action == GLFW_RELEASE) {
+			app->OnMouseRelease(button);
+		}
+							   });
+
+	glfwMakeContextCurrent(m_NativePtr);
 	s_WindowCount++;
 }
 
@@ -45,7 +71,15 @@ bool limon::Window::CloseRequest()const {
 	return glfwWindowShouldClose(m_NativePtr);
 }
 
-void limon::Window::SetCamera(Camera* camera) {
-	m_Camera = camera;
-	glfwSetWindowUserPointer(m_NativePtr, m_Camera);
+void limon::Window::SetTitle(const std::string& title) {
+	glfwSetWindowTitle(m_NativePtr, title.c_str());
+}
+
+void limon::Window::SetIcon(const Image* icon) {
+	GLFWimage* img = new GLFWimage();
+	img->pixels = (unsigned char*) icon->GetPixels();
+	img->width = icon->GetWidth();
+	img->height = icon->GetHeight();
+
+	glfwSetWindowIcon(m_NativePtr, 1, img);
 }
