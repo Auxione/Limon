@@ -12,11 +12,11 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/Dependencies/glfw/)
 #gl
 find_package(OpenGL REQUIRED)
 #gl
-
-#source
-file(GLOB LIMON_SOURCES "src/Limon/*.cpp")
-file(GLOB LIMON_HEADERS "src/Limon/*.h")
-#source
+ 
+file(GLOB LIMON_SOURCES
+    src/Limon/*.h
+    src/Limon/*.cpp
+)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -26,7 +26,6 @@ add_executable(${PROJECT_NAME} ${LIMON_SOURCES} )
 target_include_directories(${PROJECT_NAME} 
 	PUBLIC ${PROJECT_SOURCE_DIR}/Dependencies/stb/
 	PUBLIC ${PROJECT_SOURCE_DIR}/Dependencies/glfw/include/
-	PUBLIC ${PROJECT_SOURCE_DIR}${LIMON_HEADERS}
 	)
 
 target_link_Libraries(${PROJECT_NAME} 
