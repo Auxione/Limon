@@ -1,15 +1,20 @@
-﻿// Limon.cpp : Defines the entry point for the application.
+﻿#include <Windows.h>
 
 #include "Application.h"
-#include <Windows.h>
- 
-int main(int argc, char** argv) {
-	::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+#include "Window.h"
 
-	limon::Application app;
-	if (app.Run(argc, argv) == -1) {
-		::ShowWindow(::GetConsoleWindow(), SW_SHOW);
-		std::cin.get();
+int main(int argc, char** argv) {
+	std::unique_ptr<limon::Application> app(new limon::Application());
+	std::unique_ptr<limon::Window> window(new limon::Window(app.get(), 640, 640));
+
+	app->Init(argc, argv);
+
+	window->SetTitle("Limon " + app->GetPath()); 
+
+	while (window->CloseRequest() == false) {
+		app->Update();
+		window->Update();
 	}
+
 	return 0;
 }
