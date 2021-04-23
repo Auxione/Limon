@@ -1,17 +1,14 @@
-#pragma once 
+#pragma once
+#include "Vector2f.h"
 
 namespace limon {
 	class Camera {
 	public:
-		Camera() = default;
-		~Camera() = default;
+		Vector2f position;
+		Vector2f size;
+		float scale;
 
-	public:
-		float x = 0;
-		float y = 0;
-		float width = 0;
-		float height = 0;
-
+		void ScreenToWorld(double& x, double& y);
 	public:
 		void Begin();
 		void End();
